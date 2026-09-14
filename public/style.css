@@ -1,0 +1,502 @@
+/* ============================================================
+   style.css — Estilos principales de ModelGen
+   Paleta oscura profesional basada en los colores especificados:
+     #1a1a2e  fondo general
+     #16213e  panel de chat
+     #0f3460  panel de resultados
+     #e94560  acento / color primario
+   ============================================================ */
+
+/* ── Variables de color ────────────────────────────────────── */
+:root {
+  --bg-main:        #1a1a2e;
+  --bg-chat:        #16213e;
+  --bg-results:     #0f3460;
+  --bg-code:        #0d1b2a;
+  --bg-input:       #0d1b2a;
+  --bg-tab-active:  #1a1a2e;
+  --bg-tab-hover:   #1e2d4a;
+  --bg-msg-user:    #e94560;
+  --bg-msg-asst:    #16213e;
+  --accent:         #e94560;
+  --accent-dark:    #b8303d;
+  --text-primary:   #eaeaea;
+  --text-secondary: #8892b0;
+  --text-code:      #a8d8ea;
+  --border:         #1e3a5f;
+  --border-light:   #2a4a6b;
+  --radius:         8px;
+  --font-mono:      'Cascadia Code', 'Fira Code', 'Consolas', 'Menlo', monospace;
+  --font-ui:        'Segoe UI', 'Inter', system-ui, sans-serif;
+}
+
+/* ── Reset y base ───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin:     0;
+  padding:    0;
+}
+
+html, body {
+  height:      100%;
+  overflow:    hidden;
+  font-family: var(--font-ui);
+  background:  var(--bg-main);
+  color:       var(--text-primary);
+}
+
+/* ── Layout principal (dos columnas) ────────────────────────── */
+.layout {
+  display:        grid;
+  grid-template-columns: 400px 1fr;
+  height:         100vh;
+  overflow:       hidden;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PANEL IZQUIERDO — Chat
+   ════════════════════════════════════════════════════════════ */
+.chat-panel {
+  background:    var(--bg-chat);
+  border-right:  1px solid var(--border);
+  display:       flex;
+  flex-direction:column;
+  height:        100vh;
+  overflow:      hidden;
+}
+
+/* ── Cabecera del chat ─────────────────────────────────────── */
+.chat-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         16px 20px;
+  border-bottom:   1px solid var(--border);
+  flex-shrink:     0;
+}
+
+.logo {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+}
+
+.logo-icon {
+  color:       var(--accent);
+  font-size:   24px;
+  line-height: 1;
+}
+
+.logo-text {
+  font-size:   20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background:  linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-reset {
+  background:    transparent;
+  border:        1px solid var(--border-light);
+  color:         var(--text-secondary);
+  padding:       6px 12px;
+  border-radius: var(--radius);
+  cursor:        pointer;
+  font-size:     13px;
+  transition:    all 0.2s;
+}
+.btn-reset:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color:        #fff;
+}
+
+/* ── Mensajes del chat ─────────────────────────────────────── */
+.chat-messages {
+  flex:       1;
+  overflow-y: auto;
+  padding:    20px 16px;
+  display:    flex;
+  flex-direction: column;
+  gap:        16px;
+  scroll-behavior: smooth;
+}
+
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+
+/* ── Burbuja de mensaje ─────────────────────────────────────── */
+.message {
+  display:    flex;
+  gap:        10px;
+  align-items:flex-start;
+}
+
+.message.user {
+  flex-direction: row-reverse;
+}
+
+.message-avatar {
+  width:         32px;
+  height:        32px;
+  border-radius: 50%;
+  background:    var(--accent);
+  color:         #fff;
+  font-size:     11px;
+  font-weight:   700;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+}
+
+.message.user .message-avatar {
+  background: #a855f7;
+}
+
+.message-bubble {
+  max-width:     80%;
+  padding:       12px 14px;
+  border-radius: var(--radius);
+  font-size:     14px;
+  line-height:   1.6;
+}
+
+.message.assistant .message-bubble {
+  background:           var(--bg-main);
+  border:               1px solid var(--border);
+  border-top-left-radius: 2px;
+}
+
+.message.user .message-bubble {
+  background:            var(--accent);
+  color:                 #fff;
+  border-top-right-radius: 2px;
+}
+
+.message-bubble p + p {
+  margin-top: 8px;
+}
+
+.message-bubble .hint {
+  color:     var(--text-secondary);
+  font-size: 13px;
+}
+.message.user .message-bubble .hint {
+  color: rgba(255,255,255,0.75);
+}
+
+/* ── Animación "pensando…" ─────────────────────────────────── */
+.thinking .message-bubble {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  color:       var(--text-secondary);
+  font-style:  italic;
+}
+
+.dot-flashing {
+  display:     inline-flex;
+  gap:         4px;
+}
+
+.dot-flashing span {
+  width:         6px;
+  height:        6px;
+  border-radius: 50%;
+  background:    var(--accent);
+  animation:     blink 1.2s infinite;
+}
+.dot-flashing span:nth-child(2) { animation-delay: 0.2s; }
+.dot-flashing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40%           { opacity: 1;   transform: scale(1);   }
+}
+
+/* ── Área de entrada del chat ───────────────────────────────── */
+.chat-input-area {
+  padding:      12px 16px;
+  border-top:   1px solid var(--border);
+  display:      flex;
+  gap:          8px;
+  align-items:  flex-end;
+  flex-shrink:  0;
+  background:   var(--bg-chat);
+}
+
+.chat-textarea {
+  flex:         1;
+  background:   var(--bg-input);
+  border:       1px solid var(--border-light);
+  border-radius:var(--radius);
+  color:        var(--text-primary);
+  font-family:  var(--font-ui);
+  font-size:    14px;
+  padding:      10px 14px;
+  resize:       none;
+  outline:      none;
+  transition:   border-color 0.2s;
+  line-height:  1.5;
+  min-height:   44px;
+  max-height:   120px;
+}
+.chat-textarea:focus {
+  border-color: var(--accent);
+}
+.chat-textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+.btn-send {
+  background:    var(--accent);
+  border:        none;
+  color:         #fff;
+  padding:       10px 18px;
+  border-radius: var(--radius);
+  cursor:        pointer;
+  font-size:     14px;
+  font-weight:   600;
+  white-space:   nowrap;
+  transition:    background 0.2s, transform 0.1s;
+  height:        44px;
+}
+.btn-send:hover   { background: var(--accent-dark); }
+.btn-send:active  { transform: scale(0.97); }
+.btn-send:disabled {
+  background: var(--border-light);
+  cursor:     not-allowed;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PANEL DERECHO — Resultados
+   ════════════════════════════════════════════════════════════ */
+.results-panel {
+  background:    var(--bg-results);
+  display:       flex;
+  flex-direction:column;
+  height:        100vh;
+  overflow:      hidden;
+}
+
+/* ── Barra de pestañas ─────────────────────────────────────── */
+.tabs-bar {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 16px;
+  border-bottom:   1px solid var(--border);
+  background:      var(--bg-chat);
+  flex-shrink:     0;
+  gap:             8px;
+  min-height:      52px;
+}
+
+.tabs-list {
+  display: flex;
+  gap:     2px;
+  overflow-x: auto;
+}
+.tabs-list::-webkit-scrollbar { height: 2px; }
+.tabs-list::-webkit-scrollbar-thumb { background: var(--border-light); }
+
+.tab-btn {
+  background:    transparent;
+  border:        1px solid transparent;
+  color:         var(--text-secondary);
+  padding:       10px 14px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  cursor:        pointer;
+  font-size:     13px;
+  font-weight:   500;
+  white-space:   nowrap;
+  transition:    all 0.2s;
+  position:      relative;
+}
+.tab-btn:hover {
+  color:      var(--text-primary);
+  background: var(--bg-tab-hover);
+}
+.tab-btn.active {
+  color:        var(--text-primary);
+  background:   var(--bg-tab-active);
+  border-color: var(--border);
+  border-bottom-color: var(--bg-tab-active);
+}
+.tab-btn.active::after {
+  content:    '';
+  position:   absolute;
+  bottom:     -1px;
+  left:       0;
+  right:      0;
+  height:     2px;
+  background: var(--accent);
+}
+
+.btn-download {
+  background:    transparent;
+  border:        1px solid var(--accent);
+  color:         var(--accent);
+  padding:       7px 14px;
+  border-radius: var(--radius);
+  cursor:        pointer;
+  font-size:     13px;
+  font-weight:   600;
+  white-space:   nowrap;
+  transition:    all 0.2s;
+  flex-shrink:   0;
+}
+.btn-download:hover {
+  background: var(--accent);
+  color:      #fff;
+}
+
+/* ── Paneles de contenido ──────────────────────────────────── */
+.tab-pane {
+  display:        none;
+  flex-direction: column;
+  flex:           1;
+  overflow:       hidden;
+  padding:        16px;
+  gap:            10px;
+}
+.tab-pane.active {
+  display: flex;
+}
+
+/* ── Cabecera de cada panel ────────────────────────────────── */
+.pane-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  flex-shrink:     0;
+}
+
+.pane-title {
+  font-size:   13px;
+  font-weight: 600;
+  color:       var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-copy {
+  background:    transparent;
+  border:        1px solid var(--border-light);
+  color:         var(--text-secondary);
+  padding:       5px 12px;
+  border-radius: var(--radius);
+  cursor:        pointer;
+  font-size:     12px;
+  transition:    all 0.2s;
+}
+.btn-copy:hover {
+  border-color: var(--accent);
+  color:        var(--accent);
+}
+.btn-copy.copied {
+  border-color: #22c55e;
+  color:        #22c55e;
+}
+
+/* ── Bloque de código ─────────────────────────────────────── */
+.code-block {
+  flex:          1;
+  background:    var(--bg-code);
+  border:        1px solid var(--border);
+  border-radius: var(--radius);
+  padding:       16px;
+  overflow:      auto;
+  font-family:   var(--font-mono);
+  font-size:     13px;
+  line-height:   1.6;
+  color:         var(--text-code);
+  white-space:   pre;
+  tab-size:      2;
+}
+
+.code-block::-webkit-scrollbar { width: 4px; height: 4px; }
+.code-block::-webkit-scrollbar-track { background: transparent; }
+.code-block::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+
+.placeholder {
+  color:       var(--text-secondary);
+  font-style:  italic;
+}
+
+/* ── Syntax highlighting básico ────────────────────────────── */
+/* SQL */
+.kw-sql  { color: #ff79c6; font-weight: bold; }
+.kw-type { color: #8be9fd; }
+.kw-str  { color: #f1fa8c; }
+.kw-cmt  { color: #6272a4; font-style: italic; }
+/* JSON */
+.kw-key  { color: #ff79c6; }
+.kw-val  { color: #f1fa8c; }
+.kw-num  { color: #bd93f9; }
+.kw-bool { color: #ffb86c; }
+/* Java */
+.kw-ann  { color: #50fa7b; }
+.kw-jav  { color: #ff79c6; font-weight: bold; }
+.kw-jtp  { color: #8be9fd; }
+
+/* ── Contenedor del diagrama ───────────────────────────────── */
+.diagrama-container {
+  flex:            1;
+  background:      var(--bg-code);
+  border:          1px solid var(--border);
+  border-radius:   var(--radius);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  overflow:        auto;
+  min-height:      200px;
+}
+
+.diagrama-container img {
+  max-width:  100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.placeholder-img {
+  color:       var(--text-secondary);
+  font-style:  italic;
+  font-size:   14px;
+}
+
+.diagrama-error {
+  color:      var(--accent);
+  font-size:  13px;
+  text-align: center;
+  padding:    16px;
+}
+
+/* ── Scrollbars globales ───────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--border-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── Responsive (mínimo 1024px) ────────────────────────────── */
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 320px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 50vh 50vh;
+    height: 100dvh;
+  }
+  .chat-panel, .results-panel {
+    height: auto;
+  }
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ModelGen — Generador de modelos con IA</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- JSZip para la descarga en ZIP del lado del cliente -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- ════════════════════════════════════════════
+         PANEL IZQUIERDO — Chat
+         ════════════════════════════════════════════ -->
+    <aside class="chat-panel">
+
+      <header class="chat-header">
+        <div class="logo">
+          <span class="logo-icon">⬡</span>
+          <span class="logo-text">ModelGen</span>
+        </div>
+        <button id="btnReset" class="btn-reset" title="Borrar todo y empezar de nuevo">
+          ↺ Reiniciar
+        </button>
+      </header>
+
+      <div id="chatMessages" class="chat-messages">
+        <!-- Mensaje de bienvenida inicial -->
+        <div class="message assistant">
+          <div class="message-avatar">MG</div>
+          <div class="message-bubble">
+            <p>Hola, soy <strong>ModelGen</strong>. Descríbeme el sistema de información
+            que quieres modelar en lenguaje natural y generaré automáticamente el
+            modelo de datos y todos sus artefactos.</p>
+            <p class="hint">Ejemplo: <em>"Quiero guardar estudiantes con nombre,
+            email y fecha de nacimiento. Cada estudiante puede matricularse en varias
+            asignaturas."</em></p>
+          </div>
+        </div>
+      </div>
+
+      <div id="chatForm" class="chat-input-area">
+        <textarea
+          id="txtPrompt"
+          class="chat-textarea"
+          placeholder="Describe tu sistema… (Intro para enviar, Shift+Intro para nueva línea)"
+          rows="3"
+        ></textarea>
+        <button type="button" id="btnSend" class="btn-send">Enviar →</button>
+      </div>
+
+    </aside>
+
+    <!-- ════════════════════════════════════════════
+         PANEL DERECHO — Resultados con pestañas
+         ════════════════════════════════════════════ -->
+    <main class="results-panel">
+
+      <div class="tabs-bar">
+        <div class="tabs-list" role="tablist">
+          <button class="tab-btn active" data-tab="modelo"    role="tab">Modelo JSON</button>
+          <button class="tab-btn"        data-tab="mysql"     role="tab">MySQL</button>
+          <button class="tab-btn"        data-tab="mongodb"   role="tab">MongoDB</button>
+          <button class="tab-btn"        data-tab="diagrama"  role="tab">Diagrama ER</button>
+          <button class="tab-btn"        data-tab="jsonschema"role="tab">JSON Schema</button>
+          <button class="tab-btn"        data-tab="java"      role="tab">Java JPA</button>
+        </div>
+        <button id="btnDownload" class="btn-download" title="Descargar todos los artefactos en ZIP">
+          ⬇ Descargar todo
+        </button>
+      </div>
+
+      <!-- ── Pestaña: Modelo JSON ─────────────────── -->
+      <section id="tab-modelo" class="tab-pane active" role="tabpanel">
+        <div class="pane-header">
+          <span class="pane-title">Modelo intermedio JSON</span>
+          <button class="btn-copy" data-target="codeModelo">Copiar</button>
+        </div>
+        <pre id="codeModelo" class="code-block"><code class="placeholder">
+  // El modelo aparecerá aquí tras tu primer mensaje.
+        </code></pre>
+      </section>
+
+      <!-- ── Pestaña: MySQL ───────────────────────── -->
+      <section id="tab-mysql" class="tab-pane" role="tabpanel">
+        <div class="pane-header">
+          <span class="pane-title">Script SQL — MySQL</span>
+          <button class="btn-copy" data-target="codeMySQL">Copiar</button>
+        </div>
+        <pre id="codeMySQL" class="code-block"><code class="placeholder">
+  -- El script SQL aparecerá aquí.
+        </code></pre>
+      </section>
+
+      <!-- ── Pestaña: MongoDB ─────────────────────── -->
+      <section id="tab-mongodb" class="tab-pane" role="tabpanel">
+        <div class="pane-header">
+          <span class="pane-title">Esquema — MongoDB</span>
+          <button class="btn-copy" data-target="codeMongoDB">Copiar</button>
+        </div>
+        <pre id="codeMongoDB" class="code-block"><code class="placeholder">
+  // El esquema de MongoDB aparecerá aquí.
+        </code></pre>
+      </section>
+
+      <!-- ── Pestaña: Diagrama ER ─────────────────── -->
+      <section id="tab-diagrama" class="tab-pane" role="tabpanel">
+        <div class="pane-header">
+          <span class="pane-title">Diagrama ER — PlantUML</span>
+          <button class="btn-copy" data-target="codePlantUML">Copiar código</button>
+        </div>
+        <!-- Imagen renderizada por el servidor -->
+        <div id="diagramaContainer" class="diagrama-container">
+          <p class="placeholder-img">El diagrama ER aparecerá aquí.</p>
+        </div>
+        <!-- Código PlantUML fuente (oculto visualmente pero copiable) -->
+        <pre id="codePlantUML" class="code-block" style="margin-top:12px"><code class="placeholder">
+  ' El código PlantUML aparecerá aquí.
+        </code></pre>
+      </section>
+
+      <!-- ── Pestaña: JSON Schema ─────────────────── -->
+      <section id="tab-jsonschema" class="tab-pane" role="tabpanel">
+        <div class="pane-header">
+          <span class="pane-title">JSON Schema draft-07</span>
+          <button class="btn-copy" data-target="codeJSONSchema">Copiar</button>
+        </div>
+        <pre id="codeJSONSchema" class="code-block"><code class="placeholder">
+  // El JSON Schema aparecerá aquí.
+        </code></pre>
+      </section>
+
+      <!-- ── Pestaña: Java JPA ────────────────────── -->
+      <section id="tab-java" class="tab-pane" role="tabpanel">
+        <div class="pane-header">
+          <span class="pane-title">Clases Java — JPA</span>
+          <button class="btn-copy" data-target="codeJava">Copiar</button>
+        </div>
+        <pre id="codeJava" class="code-block"><code class="placeholder">
+  // Las clases Java aparecerán aquí.
+        </code></pre>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
